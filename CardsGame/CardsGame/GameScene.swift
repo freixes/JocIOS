@@ -11,23 +11,23 @@ import GameKit
 
 class GameScene: SKScene {
     
+    //Buttons
     var buttonPlay : SKSpriteNode!
-    var buttonLeaderboard : SKSpriteNode!
-    var buttonOptions: SKSpriteNode!
-    var title : SKSpriteNode!
+    var easyDifficulty : SKSpriteNode!
+    var mediumDifficulty : SKSpriteNode!
+    var hardDifficulty : SKSpriteNode!
+    var gameBack : SKSpriteNode!
     
-    let cardsPerRow : Int = 3
-    let cardsPerColumn : Int = 4
-    let cardSizeX : CGFloat = 50
-    let cardSizeY : CGFloat = 50
+    var cardsPerRow : Int = 4
+    var cardsPerColumn : Int = 5
+    let cardSizeX : CGFloat = 80
+    let cardSizeY : CGFloat = 120
     
-    var scorePanelHeight : CGFloat = 150
+    var difficulty : Int!
     
     var cards : [SKSpriteNode] = []
     var cardsBacks : [SKSpriteNode] = []
     var cardsStatus : [Bool] = []
-    
-    let numberOfTypesOfCards : Int = 10
     
     var cardsSequence : [Int] = []
     
@@ -39,121 +39,95 @@ class GameScene: SKScene {
     var gameIsPlaying : Bool = false
     var lockInteraction : Bool = false
     
-    var scoreboard : SKSpriteNode!
-    
     var tryCountCurrent : Int = 0
     var tryCountBest : Int!
-    
     var tryCountCurrentLabel : SKLabelNode!
-    var tryCountBestLabel : SKLabelNode!
     
     var DelayPriorToHidingCards : TimeInterval = 1.5
     
-    var finishedFlag : SKSpriteNode!
-    
-    var buttonReset : SKSpriteNode!
-    
-    var SoundActionButton : SKAction!
-    var SoundActionMatch : SKAction!
-    var SoundActionNoMatch : SKAction!
-    var SoundActionWin : SKAction!
-    
-    var gcEnabled = Bool()
-    var gcDefaultLeaderboard = String()
-    
-    
     override func didMove(to view: SKView) {
-        
-        setupScenery()
-        
+        SetDifficulty(difficultyId: 1)
         CreateMenu()
-        
-        CreateScoreboard()
-        HideScoreboard()
-        
-        CreateFinishedFlag()
-        HideFinishedFlag()
-        
-        SetupAudio()
+        CreateBackGround()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //let touch = touches.anyObject() as UITouch
-        
         let touch =  touches.first
-        
         let positionInScene : CGPoint = touch!.location(in: self)
         let touchedNode : SKSpriteNode = self.atPoint(positionInScene) as! SKSpriteNode
         
-        
         self.ProcessItemTouch(nod: touchedNode)
     }
-    
     
     override func update(_ currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
     
-    func setupScenery()
-    {
-        let background = SKSpriteNode(imageNamed: BackgroundImage)
-        background.anchorPoint = CGPoint(x:0, y:1)
-        background.position = CGPoint(x:0, y:size.height)
-        background.zPosition = 0
-        background.size = CGSize(width: self.view!.bounds.size.width, height: self.view!.bounds.size.height)
-        addChild(background)
-    }
-    
     func CreateMenu()
     {
-        let offsetY : CGFloat = 3.0
-        let offsetX : CGFloat = 5.0
-        buttonRate = SKSpriteNode(imageNamed: buttonRateImage)
-        buttonRate.position = CGPoint(x:size.width/2, y:size.height / 2 + buttonRate.size.height + offsetY)
-        buttonRate.zPosition = 10
-        buttonRate.name = "rate"
-        addChild(buttonRate)
-        
-        buttonPlay = SKSpriteNode(imageNamed: buttonPlayImage)
-        buttonPlay.position = CGPoint(x:size.width / 2 - offsetX - buttonPlay.size.width / 2, y:size.height/2)
+        buttonPlay = SKSpriteNode(imageNamed: "Play")
+        buttonPlay.position = CGPoint(x:0, y:0)
         buttonPlay.zPosition = 10
         buttonPlay.name = "play"
         addChild(buttonPlay)
         
+        easyDifficulty = SKSpriteNode(imageNamed : "Play")
+        easyDifficulty.zPosition = 10
+        easyDifficulty.position = CGPoint(x : -150, y : -50)
+        easyDifficulty.name = "Easy"
+        addChild(easyDifficulty)
         
-        buttonLeaderboard = SKSpriteNode(imageNamed: buttonLeaderboardImage)
-        buttonLeaderboard.position = CGPoint(x:size.width / 2 + offsetX + buttonLeaderboard.size.width / 2, y:size.height / 2)
-        buttonLeaderboard.zPosition = 10
-        buttonLeaderboard.name = "leaderboard"
-        addChild(buttonLeaderboard)
+        mediumDifficulty = SKSpriteNode(imageNamed : "Play")
+        mediumDifficulty.zPosition = 10
+        mediumDifficulty.position = CGPoint(x : 0, y : -50)
+        mediumDifficulty.name = "Medium"
+        addChild(mediumDifficulty)
         
-        title = SKSpriteNode(imageNamed: titleImage)
-        title.position = CGPoint(x:size.width/2, y:buttonRate.position.y + buttonRate.size.height / 2 + title.size.height / 2 + offsetY)
-        title.zPosition = 10
-        title.name = "title"
-        addChild(title)
-        title.setScale(1)
+        hardDifficulty = SKSpriteNode(imageNamed : "Play")
+        hardDifficulty.zPosition = 10
+        hardDifficulty.position = CGPoint(x : 150, y : -50)
+        hardDifficulty.name = "Hard"
+        addChild(hardDifficulty)
     }
     
-    
-    func ShowMenu()
+    func ToggleMenu(b : Bool)
     {
+        let value = BoolToCGFloat(b: b)
         let duration : TimeInterval = 0.5
-        buttonPlay.run(SKAction.fadeAlpha(to: 1, duration: duration))
-        buttonLeaderboard.run(SKAction.fadeAlpha(to: 1, duration: duration))
-
-        title.run(SKAction.fadeAlpha(to: 1, duration: duration))
+        buttonPlay.run(SKAction.fadeAlpha(to: value, duration: duration))
+        easyDifficulty.run(SKAction.fadeAlpha(to: value, duration: duration))
+        mediumDifficulty.run(SKAction.fadeAlpha(to: value, duration: duration))
+        hardDifficulty.run(SKAction.fadeAlpha(to: value, duration: duration))
     }
     
-    
-    func HideMenu()
+    func ToggleGame(b : Bool)
     {
+        let value = BoolToCGFloat(b : b)
         let duration : TimeInterval = 0.5
-        buttonPlay.run(SKAction.fadeAlpha(to: 0, duration: duration))
-        buttonLeaderboard.run(SKAction.fadeAlpha(to: 0, duration: duration))
-        title.run(SKAction.fadeAlpha(to: 0, duration: duration))
+        gameBack.run(SKAction.fadeAlpha(to: value, duration: duration))
     }
     
+    func BoolToCGFloat(b : Bool) -> CGFloat
+    {
+        if(b)
+        {
+            return CGFloat(1)
+        }
+        else
+        {
+            return CGFloat(0)
+        }
+    }
+    
+    func CreateBackGround()
+    {
+        let background = SKSpriteNode(imageNamed: "Background")
+        background.anchorPoint = CGPoint(x:0.5, y:0.5)
+        background.position = CGPoint(x:0, y:0)
+        background.zPosition = 0
+        background.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
+        addChild(background)
+    }
     
     func ProcessItemTouch(nod : SKSpriteNode)
     {
@@ -162,23 +136,26 @@ class GameScene: SKScene {
             if(nod.name == "play")
             {
                 print("play button pressed")
-                HideMenu()
-                fillCardSequence()
+                ToggleMenu(b: false)
+                FillCardSequence()
                 ResetCardsStatus()
                 CreateCardboard()
+                CreateGameButtons()
+                ToggleGame(b: true)
                 gameIsPlaying = true
-                PlaceScoreboardAboveCards()
-                ShowScoreboard()
-                HideFinishedFlag()
-                run(SoundActionButton)
             }
-            else if (nod.name == "leaderboard")
+            else if(nod.name == "Easy")
             {
-                print("leaderboard button pressed")
-                run(SoundActionButton)
-                showLeaderboard()
+                SetDifficulty(difficultyId: 0)
             }
-            
+            else if(nod.name == "Medium")
+            {
+                SetDifficulty(difficultyId: 1)
+            }
+            else if(nod.name == "Hard")
+            {
+                SetDifficulty(difficultyId: 2)
+            }
         }
         else
         {
@@ -189,7 +166,6 @@ class GameScene: SKScene {
             if( nod.name == "reset")
             {
                 ResetGame()
-                run(SoundActionButton)
                 return
             }
             let num: Int? = Int(nod.name!)
@@ -203,11 +179,10 @@ class GameScene: SKScene {
                     }
                     else
                     {
-                        print("the card with number \(num) was touched")
+                        print("the card with number \(String(describing: num)) was touched")
                         var i : Int = 0
                         for cardBack in cardsBacks {
                             if(cardBack === nod) {
-                                run(SoundActionButton)
                                 // the nod is identical to the cardback at index i
                                 let cardNode : SKSpriteNode = cards[i] as SKSpriteNode
                                 if(selectedCardIndex1 == -1) {
@@ -221,29 +196,27 @@ class GameScene: SKScene {
                                         selectedCardIndex2 = i
                                         selectedCard2Value = cardNode.name!
                                         cardBack.run(SKAction.hide())
-                                        // at this point we want to compare the 2 cards for a match
+                                        
                                         if(selectedCard1Value == selectedCard2Value) {
-                                            print("we have a match")
-                                            Timer.scheduledTimer(timeInterval: DelayPriorToHidingCards, target: self, selector: #selector(GameScene.HideSelectedCards), userInfo: nil, repeats: false)
-                                            
-                                            SetStatusCardFound(cardIndex: selectedCardIndex1)
-                                            SetStatusCardFound(cardIndex: selectedCardIndex2)
-                                            run(SoundActionMatch)
-                                            if(CheckIfGameOver() == true) {
-                                                gameIsPlaying = false
-                                                ShowMenu()
-                                                run(SoundActionWin)
-                                                PlaceScoreboardBelowPlayButton()
-                                                SaveBestTryCount()
-                                                ShowFinishedFlag()
-                                                buttonReset.isHidden = true
-                                                
+                                            print("matched cards")
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + DelayPriorToHidingCards)
+                                            {
+                                                self.SetStatusCardFound(cardIndex: self.selectedCardIndex1)
+                                                self.SetStatusCardFound(cardIndex: self.selectedCardIndex2)
+                                                self.HideSelectedCards()
+                                                if(self.CheckIfGameOver() == true) {
+                                                    self.gameIsPlaying = false
+                                                    self.ToggleMenu(b: true)
+                                                    self.ToggleGame(b: false)
+                                                }
                                             }
                                         } else {
-                                            print("no match")
-                                            Timer.scheduledTimer(timeInterval: DelayPriorToHidingCards, target: self, selector: #selector(GameScene.ResetSelectedCards), userInfo: nil, repeats: false)
-                                            run(SoundActionNoMatch)
-                                            IncreaseTryCount()
+                                            print("unmatched cards")
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + DelayPriorToHidingCards / 2)
+                                            {
+                                                self.ResetSelectedCards()
+                                                self.SetTryCount(score: self.tryCountCurrent + 1)
+                                            }
                                         }
                                     }
                                 }
@@ -256,60 +229,86 @@ class GameScene: SKScene {
         }
     }
     
+    func SetDifficulty(difficultyId : Int)
+    {
+        difficulty = difficultyId
+        
+        if(difficulty == 0)
+        {
+            cardsPerColumn = 4
+            cardsPerRow = 3
+        }
+        else if(difficulty == 0)
+        {
+            cardsPerColumn = 4
+            cardsPerRow = 4
+        }
+        else if(difficulty == 0)
+        {
+            cardsPerColumn = 5
+            cardsPerRow = 4
+        }
+    }
+    
+    func CreateGameButtons()
+    {
+        gameBack = SKSpriteNode(imageNamed: "Play")
+        gameBack.position = CGPoint(x: -self.view!.bounds.size.width + 50, y: -self.view!.bounds.size.height + 25)
+        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
+        gameBack.zPosition = 10
+        gameBack.name = "GameBack"
+        addChild(gameBack)
+    }
     
     func CreateCardboard()
     {
-        let totalEmptyScapeX : CGFloat = self.size.width - ( CGFloat(cardsPerRow + 1) ) * cardSizeX
-        let offsetX : CGFloat = totalEmptyScapeX / (CGFloat(cardsPerRow) + 2)
+        let totalEmptyScapeX : CGFloat = self.size.width - (CGFloat(cardsPerRow)) * cardSizeX
+        let offsetX : CGFloat = totalEmptyScapeX / (CGFloat(cardsPerRow + 1))
         
-        let totalEmptySpaceY : CGFloat = self.size.height - scorePanelHeight - ( CGFloat(cardsPerColumn + 1)) * cardSizeY
-        let offsetY : CGFloat = totalEmptySpaceY / ( CGFloat(cardsPerColumn) + 2)
+        let totalEmptySpaceY : CGFloat = self.size.height - (CGFloat(cardsPerColumn)) * cardSizeY
+        let offsetY : CGFloat = totalEmptySpaceY / ( CGFloat(cardsPerColumn + 1))
         
-        cards = []
-        cardsBacks = []
+        cards = []; cardsBacks = []
         
-        var idx : Int = 0
-        for i in 0...cardsPerRow
+        for i in 0...cardsPerRow - 1
         {
-            for j in 0...cardsPerColumn
+            for j in 0...cardsPerColumn - 1
             {
-                let cardIndex : Int = cardsSequence[idx] // todo: need to fill the cardsSequence array!
-                idx += 1
-                let cardName : String = String(format: "card-%i",cardIndex)
-                let card : SKSpriteNode = SKSpriteNode(imageNamed: cardName)
-                card.size = CGSize(width: cardSizeX, height:cardSizeY)
-                card.anchorPoint = CGPoint(x:0, y:0)
-                
-                let posX : CGFloat = offsetX + CGFloat(i) * card.size.width + offsetX * CGFloat(i)
-                let posY : CGFloat = offsetY + CGFloat(j) * card.size.height + offsetY * CGFloat(j)
-                card.position = CGPoint(x:posX, y:posY)
-                card.zPosition = 9
-                card.name = String(format: "%i", cardIndex)
-                addChild(card)
-                cards.append(card)
-                
-                let cardBack : SKSpriteNode = SKSpriteNode(imageNamed: "card-back")
-                cardBack.size = CGSize(width:cardSizeX, height:cardSizeY)
-                cardBack.anchorPoint = CGPoint(x:0, y:0)
-                cardBack.zPosition = 10
-                cardBack.position = CGPoint(x:posX, y:posY)
-                cardBack.name = String(format: "%i", cardIndex)
-                addChild(cardBack)
-                cardsBacks.append(cardBack)
+                let posX : CGFloat = -self.size.width/2 + offsetX + cardSizeX / 2 + CGFloat(i) * (cardSizeX + offsetX)
+                let posY : CGFloat = self.size.height/2 - offsetY - cardSizeY / 2 - CGFloat(j) * (cardSizeY + offsetY)
+                CreateCard(posX : posX, posY : posY, idx : (i * cardsPerColumn) + j)
             }
         }
     }
     
-    /*func shuffle<C: MutableCollectionType where C.Index == Int>(var list: C) -> C {
-     let total = list.count
-     for i in 0..<(total - 1) {
-     let j = Int(arc4random_uniform(UInt32(total - i))) + i
-     swap(&list[i], &list[j])
-     }
-     return list
-     }*/
+    func CreateCard(posX : CGFloat, posY : CGFloat, idx : Int)
+    {
+        let anchorPoint = CGPoint(x : 0.5, y : 0.5)
+        let zPosition = CGFloat(9.0)
+        
+        let cardIndex : Int = cardsSequence[idx]
+        let cardName : String = String(format: "Number-%i",cardIndex)
+        let card : SKSpriteNode = SKSpriteNode(imageNamed: cardName)
+        card.size = CGSize(width: cardSizeX, height:cardSizeY)
+        card.anchorPoint = anchorPoint
+        
+        card.position = CGPoint(x:posX, y:posY)
+        card.zPosition = zPosition
+        card.name = String(format: "%i", cardIndex)
+        addChild(card)
+        cards.append(card)
+        
+        let cardBack : SKSpriteNode = SKSpriteNode(imageNamed: "CardBack")
+        cardBack.size = CGSize(width:cardSizeX, height:cardSizeY)
+        cardBack.anchorPoint = anchorPoint
+        cardBack.zPosition = zPosition + 1
+        cardBack.position = CGPoint(x:posX, y:posY)
+        cardBack.name = String(format: "%i", cardIndex)
+        addChild(cardBack)
+        cardsBacks.append(cardBack)
+    }
     
-    func shuffleArray<T>( array: inout Array<T>) -> Array<T>
+    func ShuffleArray<T>( array: inout Array<T>) -> Array<T>
     {
         var index = array.count - 1
         while index > 0 {
@@ -317,39 +316,30 @@ class GameScene: SKScene {
             // Random int from 0 to index-1
             let j = Int(arc4random_uniform(UInt32(index-1)))
             
-            // Swap two array elements
-            // Notice '&' required as swap uses 'inout' parameters
-            swap(&array[index], &array[j])
+            // Swap array elements
+            let temp = array[index]
+            array[index] = array[j]
+            array[j] = temp
+            
             index -= 1
         }
         return array
     }
     
-    func fillCardSequence()
+    func FillCardSequence()
     {
         cardsSequence.removeAll(keepingCapacity: false)
-        let totalCards : Int = (cardsPerRow + 1) * (cardsPerColumn + 1) / 2
-        for i in 1...(totalCards)
+        
+        for i in 1...(cardsPerRow * cardsPerColumn / 2)
         {
             cardsSequence.append(i)
             cardsSequence.append(i)
         }
-        let newSequence = shuffleArray(array: &cardsSequence)
+        
+        let newSequence = ShuffleArray(array: &cardsSequence)
         cardsSequence.removeAll(keepingCapacity: false)
         cardsSequence += newSequence
     }
-    
-    
-    func fillCardSequenceDebug()
-    {
-        let totalCards : Int = (cardsPerRow + 1) * (cardsPerColumn + 1) / 2
-        for i in 1...(totalCards)
-        {
-            cardsSequence.append(i)
-            cardsSequence.append(i)
-        }
-    }
-    
     
     func HideSelectedCards()
     {
@@ -359,12 +349,15 @@ class GameScene: SKScene {
         card1.run(SKAction.hide())
         card2.run(SKAction.hide())
         
+        DeselectCards()
+    }
+    
+    func DeselectCards()
+    {
         selectedCardIndex1 = -1
         selectedCardIndex2 = -1
         lockInteraction = false
-        
     }
-    
     
     func SetStatusCardFound(cardIndex : Int)
     {
@@ -390,68 +383,8 @@ class GameScene: SKScene {
         
         card1.run(SKAction.unhide())
         card2.run(SKAction.unhide())
-        selectedCardIndex1 = -1
-        selectedCardIndex2 = -1
-        lockInteraction = false
         
-    }
-    
-    
-    func CreateScoreboard()
-    {
-        scoreboard = SKSpriteNode(imageNamed: scoreboardImage)
-        scoreboard.position = CGPoint(x:size.width / 2, y:size.height - 50 - scoreboard.size.height / 2)
-        scoreboard.zPosition = 1
-        scoreboard.name = "scoreboard"
-        addChild(scoreboard)
-        
-        tryCountCurrentLabel = SKLabelNode(fontNamed: fontName)
-        tryCountCurrentLabel?.text = "Attempts: \(tryCountCurrent)"
-        tryCountCurrentLabel?.fontSize = 30
-        tryCountCurrentLabel?.fontColor = SKColor.white
-        tryCountCurrentLabel?.zPosition = 11
-        tryCountCurrentLabel?.position = CGPoint(x:scoreboard.position.x, y:scoreboard.position.y + 10)
-        addChild(tryCountCurrentLabel)
-        
-        // todo: we need to get the best score from the storage (NSUSerDefault)
-        tryCountBest = UserDefaults.standard.integer(forKey: "besttrycount") as Int
-        
-        tryCountBestLabel = SKLabelNode(fontNamed: fontName)
-        tryCountBestLabel?.text = "Best: \(tryCountBest)"
-        tryCountBestLabel?.fontSize = 30
-        tryCountBestLabel?.fontColor = SKColor.white
-        tryCountBestLabel?.zPosition = 11
-        tryCountBestLabel?.position = CGPoint(x:tryCountCurrentLabel.position.x, y:tryCountCurrentLabel.position.y - 10 - tryCountCurrentLabel.fontSize)
-        addChild(tryCountBestLabel)
-        
-        buttonReset = SKSpriteNode(imageNamed: buttonRestartImage)
-        buttonReset.position = CGPoint(x:scoreboard.position.x + scoreboard.size.width / 2 - buttonReset.size.width / 2, y:scoreboard.position.y - buttonReset.size.height / 3)
-        buttonReset.name = "reset"
-        buttonReset.setScale(0.5)
-        buttonReset.zPosition = 11
-        addChild(buttonReset)
-        buttonReset.isHidden = true
-    }
-    
-    func HideScoreboard()
-    {
-        scoreboard.isHidden = true
-        tryCountBestLabel.isHidden = true
-        tryCountCurrentLabel.isHidden = true
-        buttonReset.isHidden = true
-    }
-    
-    func ShowScoreboard()
-    {
-        scoreboard.isHidden = false
-        tryCountBestLabel.isHidden = false
-        tryCountCurrentLabel.isHidden = false
-        buttonReset.isHidden = false
-        
-        if(tryCountBest == nil || tryCountBest == 0)
-        {
-            tryCountBestLabel.isHidden = true
-        }
+        DeselectCards()
     }
     
     func CheckIfGameOver() -> Bool
@@ -465,86 +398,23 @@ class GameScene: SKScene {
                 break
             }
         }
-        
         return gameOver
-    }
-    
-    func PlaceScoreboardBelowPlayButton()
-    {
-        scoreboard.position = CGPoint(x:size.width / 2, y:buttonPlay.position.y - scoreboard.size.height)
-        
-        tryCountCurrentLabel?.position = CGPoint(x:scoreboard.position.x, y:scoreboard.position.y + 10)
-        tryCountBestLabel?.position = CGPoint(x:tryCountCurrentLabel.position.x, y:tryCountCurrentLabel.position.y - 10 - tryCountBestLabel.fontSize)
-        tryCountBestLabel.isHidden = false
-    }
-    
-    
-    func PlaceScoreboardAboveCards()
-    {
-        scoreboard.position = CGPoint(x:size.width / 2, y:size.height - 50 - scoreboard.size.height / 2)
-        
-        tryCountCurrentLabel?.position = CGPoint(x:scoreboard.position.x, y:scoreboard.position.y + 10)
-        tryCountBestLabel?.position = CGPoint(x:tryCountCurrentLabel.position.x, y:tryCountCurrentLabel.position.y - 10 - tryCountBestLabel.fontSize)
-    }
-    
-    func SaveBestTryCount()
-    {
-        if(tryCountBest == nil || tryCountBest == 0 || tryCountCurrent < tryCountBest)
-        {
-            tryCountBest = tryCountCurrent
-            UserDefaults.standard.set(tryCountBest, forKey: "besttrycount")
-            UserDefaults.standard.synchronize()
-            tryCountBestLabel?.text = "Best: \(tryCountBest)"
-            submitScore()
-        }
-    }
-    
-    
-    func CreateFinishedFlag()
-    {
-        finishedFlag = SKSpriteNode(imageNamed: finishedFlagImage)
-        finishedFlag.size = CGSize(width:cardSizeX, height:cardSizeY)
-        finishedFlag.anchorPoint = CGPoint(x: 0, y: 0)  //CGPointMake(0, 0)
-        finishedFlag.position = CGPoint(x:size.width / 2, y:scoreboard.position.y - scoreboard.size.height / 2 - finishedFlag.size.height / 2)
-        finishedFlag.zPosition = 11
-        finishedFlag.name = "finishedflag"
-        addChild(finishedFlag)
-        finishedFlag.isHidden = true
-        
-    }
-    
-    func ShowFinishedFlag()
-    {
-        finishedFlag.position = CGPoint(x:size.width / 2, y:scoreboard.position.y - scoreboard.size.height / 2 - finishedFlag.size.height / 2)
-        finishedFlag.isHidden = false
-        
-    }
-    
-    func HideFinishedFlag()
-    {
-        finishedFlag.isHidden = true
-    }
-    
-    func IncreaseTryCount()
-    {
-        tryCountCurrent = tryCountCurrent + 1
-        tryCountCurrentLabel?.text = "Attempts: \(tryCountCurrent)"
     }
     
     func ResetGame()
     {
-        run(SoundActionButton)
         RemoveAllCards()
-        PlaceScoreboardAboveCards()
-        ShowScoreboard()
-        fillCardSequence()
+        FillCardSequence()
         CreateCardboard()
         ResetCardsStatus()
-        tryCountCurrent = 0
-        tryCountCurrentLabel?.text = "Attempts: \(tryCountCurrent)"
-        finishedFlag.isHidden = true
+        SetTryCount(score : 0)
     }
     
+    func SetTryCount(score : Int!)
+    {
+        tryCountCurrent = score
+        tryCountCurrentLabel?.text = "Attempts: \(tryCountCurrent)"
+    }
     
     func RemoveAllCards()
     {
@@ -567,26 +437,5 @@ class GameScene: SKScene {
         selectedCard2Value = ""
         selectedCardIndex1 = -1
         selectedCardIndex2 = -1
-    }
-    
-    
-    func SetupAudio()
-    {
-        SoundActionButton = SKAction.playSoundFileNamed(soundButtonFile, waitForCompletion: false)
-        SoundActionMatch = SKAction.playSoundFileNamed(soundMatchFile, waitForCompletion: false)
-        SoundActionNoMatch = SKAction.playSoundFileNamed(soundNoMatchFile, waitForCompletion: false)
-        SoundActionWin = SKAction.playSoundFileNamed(soundWinFile, waitForCompletion: false)
-    }
-    
-    
-    func showLeaderboard()
-    {
-        let gcVC : GKGameCenterViewController = GKGameCenterViewController()
-        //gcVC.gameCenterDelegate = self
-        gcVC.viewState = GKGameCenterViewControllerState.leaderboards
-        //gcVC.leaderboardIdentifier = LeaderboardID
-        
-        let vc = self.view?.window?.rootViewController
-        vc?.present(gcVC, animated: true, completion: nil)
     }
 }
