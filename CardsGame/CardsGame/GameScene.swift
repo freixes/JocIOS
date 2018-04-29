@@ -11,6 +11,8 @@ import GameKit
 
 class GameScene: SKScene {
     
+    let transitionDuration : TimeInterval = 0.1
+    
     //Buttons
     var buttonPlay : SKSpriteNode!
     var easyDifficulty : SKSpriteNode!
@@ -39,9 +41,11 @@ class GameScene: SKScene {
     var gameIsPlaying : Bool = false
     var lockInteraction : Bool = false
     
-    var tryCountCurrent : Int = 0
-    var tryCountBest : Int!
-    var tryCountCurrentLabel : SKLabelNode!
+    var matchesCount : Int = 0
+    var tryCount : Int = 0
+    var score : Int = 0
+    
+    var scoreLabel : SKLabelNode!
     
     var DelayPriorToHidingCards : TimeInterval = 1.5
     
@@ -63,98 +67,25 @@ class GameScene: SKScene {
         /* Called before each frame is rendered */
     }
     
-    func CreateMenu()
-    {
-        buttonPlay = SKSpriteNode(imageNamed: "Play")
-        buttonPlay.position = CGPoint(x:0, y:0)
-        buttonPlay.zPosition = 10
-        buttonPlay.name = "play"
-        addChild(buttonPlay)
-        
-        easyDifficulty = SKSpriteNode(imageNamed : "Play")
-        easyDifficulty.zPosition = 10
-        easyDifficulty.position = CGPoint(x : -150, y : -50)
-        easyDifficulty.name = "Easy"
-        addChild(easyDifficulty)
-        
-        mediumDifficulty = SKSpriteNode(imageNamed : "Play")
-        mediumDifficulty.zPosition = 10
-        mediumDifficulty.position = CGPoint(x : 0, y : -50)
-        mediumDifficulty.name = "Medium"
-        addChild(mediumDifficulty)
-        
-        hardDifficulty = SKSpriteNode(imageNamed : "Play")
-        hardDifficulty.zPosition = 10
-        hardDifficulty.position = CGPoint(x : 150, y : -50)
-        hardDifficulty.name = "Hard"
-        addChild(hardDifficulty)
-    }
-    
-    func ToggleMenu(b : Bool)
-    {
-        let value = BoolToCGFloat(b: b)
-        let duration : TimeInterval = 0.5
-        buttonPlay.run(SKAction.fadeAlpha(to: value, duration: duration))
-        easyDifficulty.run(SKAction.fadeAlpha(to: value, duration: duration))
-        mediumDifficulty.run(SKAction.fadeAlpha(to: value, duration: duration))
-        hardDifficulty.run(SKAction.fadeAlpha(to: value, duration: duration))
-    }
-    
-    func ToggleGame(b : Bool)
-    {
-        let value = BoolToCGFloat(b : b)
-        let duration : TimeInterval = 0.5
-        gameBack.run(SKAction.fadeAlpha(to: value, duration: duration))
-    }
-    
-    func BoolToCGFloat(b : Bool) -> CGFloat
-    {
-        if(b)
-        {
-            return CGFloat(1)
-        }
-        else
-        {
-            return CGFloat(0)
-        }
-    }
-    
-    func CreateBackGround()
-    {
-        let background = SKSpriteNode(imageNamed: "Background")
-        background.anchorPoint = CGPoint(x:0.5, y:0.5)
-        background.position = CGPoint(x:0, y:0)
-        background.zPosition = 0
-        background.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
-        addChild(background)
-    }
     
     func ProcessItemTouch(nod : SKSpriteNode)
     {
         if(gameIsPlaying == false)
         {
-            if(nod.name == "play")
-            {
-                print("play button pressed")
-                ToggleMenu(b: false)
-                FillCardSequence()
-                ResetCardsStatus()
-                CreateCardboard()
-                CreateGameButtons()
-                ToggleGame(b: true)
-                gameIsPlaying = true
-            }
-            else if(nod.name == "Easy")
+            if(nod.name == "Easy")
             {
                 SetDifficulty(difficultyId: 0)
+                PlayGame()
             }
             else if(nod.name == "Medium")
             {
                 SetDifficulty(difficultyId: 1)
+                PlayGame()
             }
             else if(nod.name == "Hard")
             {
                 SetDifficulty(difficultyId: 2)
+                PlayGame()
             }
         }
         else
@@ -163,11 +94,16 @@ class GameScene: SKScene {
             if(nod.name == nil){
                 return
             }
-            if( nod.name == "reset")
+            /*if( nod.name == "reset")
             {
                 ResetGame()
                 return
+            }*/
+            if(nod.name == "GameBack")
+            {
+                GoMenu()
             }
+            
             let num: Int? = Int(nod.name!)
             if(num != nil) // it is a number
             {
@@ -204,10 +140,9 @@ class GameScene: SKScene {
                                                 self.SetStatusCardFound(cardIndex: self.selectedCardIndex1)
                                                 self.SetStatusCardFound(cardIndex: self.selectedCardIndex2)
                                                 self.HideSelectedCards()
+                                                self.SetMatchesCount(score: self.matchesCount + 1)
                                                 if(self.CheckIfGameOver() == true) {
-                                                    self.gameIsPlaying = false
-                                                    self.ToggleMenu(b: true)
-                                                    self.ToggleGame(b: false)
+                                                    self.GoMenu()
                                                 }
                                             }
                                         } else {
@@ -215,7 +150,7 @@ class GameScene: SKScene {
                                             DispatchQueue.main.asyncAfter(deadline: .now() + DelayPriorToHidingCards / 2)
                                             {
                                                 self.ResetSelectedCards()
-                                                self.SetTryCount(score: self.tryCountCurrent + 1)
+                                                self.SetTryCount(score: self.tryCount + 1)
                                             }
                                         }
                                     }
@@ -227,37 +162,6 @@ class GameScene: SKScene {
                 }
             }
         }
-    }
-    
-    func SetDifficulty(difficultyId : Int)
-    {
-        difficulty = difficultyId
-        
-        if(difficulty == 0)
-        {
-            cardsPerColumn = 4
-            cardsPerRow = 3
-        }
-        else if(difficulty == 0)
-        {
-            cardsPerColumn = 4
-            cardsPerRow = 4
-        }
-        else if(difficulty == 0)
-        {
-            cardsPerColumn = 5
-            cardsPerRow = 4
-        }
-    }
-    
-    func CreateGameButtons()
-    {
-        gameBack = SKSpriteNode(imageNamed: "Play")
-        gameBack.position = CGPoint(x: -self.view!.bounds.size.width + 50, y: -self.view!.bounds.size.height + 25)
-        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
-        gameBack.zPosition = 10
-        gameBack.name = "GameBack"
-        addChild(gameBack)
     }
     
     func CreateCardboard()
@@ -401,19 +305,66 @@ class GameScene: SKScene {
         return gameOver
     }
     
+    func PlayGame()
+    {
+        ResetGame()
+        GoGame()
+    }
+    
+    func SetDifficulty(difficultyId : Int)
+    {
+        difficulty = difficultyId
+        
+        if(difficulty == 0)
+        {
+            cardsPerColumn = 4
+            cardsPerRow = 3
+        }
+        else if(difficulty == 0)
+        {
+            cardsPerColumn = 4
+            cardsPerRow = 4
+        }
+        else if(difficulty == 0)
+        {
+            cardsPerColumn = 5
+            cardsPerRow = 4
+        }
+    }
+    
     func ResetGame()
     {
+        CreateGameButtons()
+        
         RemoveAllCards()
         FillCardSequence()
         CreateCardboard()
         ResetCardsStatus()
+        ResetStats()
+    }
+    
+    func ResetStats()
+    {
         SetTryCount(score : 0)
+        SetMatchesCount(score: 0)
     }
     
     func SetTryCount(score : Int!)
     {
-        tryCountCurrent = score
-        tryCountCurrentLabel?.text = "Attempts: \(tryCountCurrent)"
+        tryCount = score
+        UpdateScore()
+    }
+    
+    func SetMatchesCount(score : Int!)
+    {
+        matchesCount = score
+        UpdateScore()
+    }
+    
+    func UpdateScore()
+    {
+        score = matchesCount * (difficulty + 1) * 5 - tryCount
+        scoreLabel?.text = "Score: \(score)"
     }
     
     func RemoveAllCards()
@@ -438,4 +389,113 @@ class GameScene: SKScene {
         selectedCardIndex1 = -1
         selectedCardIndex2 = -1
     }
+    //Scene management
+    
+    func CreateBackGround()
+    {
+        let background = SKSpriteNode(imageNamed: "Background")
+        background.anchorPoint = CGPoint(x:0.5, y:0.5)
+        background.position = CGPoint(x:0, y:0)
+        background.zPosition = 0
+        background.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
+        addChild(background)
+    }
+    
+    func CreateMenu()
+    {
+        buttonPlay = SKSpriteNode(imageNamed: "title")
+        buttonPlay.position = CGPoint(x:0, y:100)
+        buttonPlay.zPosition = 10
+        buttonPlay.name = "title"
+        addChild(buttonPlay)
+        
+        easyDifficulty = SKSpriteNode(imageNamed : "easy")
+        easyDifficulty.zPosition = 10
+        easyDifficulty.position = CGPoint(x : -200, y : -50)
+        easyDifficulty.name = "Easy"
+        addChild(easyDifficulty)
+        
+        mediumDifficulty = SKSpriteNode(imageNamed : "normal")
+        mediumDifficulty.zPosition = 10
+        mediumDifficulty.position = CGPoint(x : 0, y : -50)
+        mediumDifficulty.name = "Medium"
+        addChild(mediumDifficulty)
+        
+        hardDifficulty = SKSpriteNode(imageNamed : "hard")
+        hardDifficulty.zPosition = 10
+        hardDifficulty.position = CGPoint(x : 200, y : -50)
+        hardDifficulty.name = "Hard"
+        addChild(hardDifficulty)
+    }
+    
+    func CreateGameButtons()
+    {
+        gameBack = SKSpriteNode(imageNamed: "back")
+        gameBack.position = CGPoint(x: -self.view!.bounds.size.width + 125, y: -self.view!.bounds.size.height + 120)
+        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
+        gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
+        gameBack.zPosition = 10
+        gameBack.name = "GameBack"
+        addChild(gameBack)
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.position = CGPoint(x : self.view!.bounds.size.width - 175, y : self.view!.bounds.size.height - 150)
+        scoreLabel.text = "hello"
+        scoreLabel.fontSize = 32
+        scoreLabel.color = SKColor.white
+        scoreLabel.zPosition = 10
+        addChild(scoreLabel)
+    }
+    
+    func GoMenu()
+    {
+        gameIsPlaying = false
+        
+        ToggleGame(b: false)
+        ToggleMenu(b: true)
+    }
+    
+    func GoGame()
+    {
+        gameIsPlaying = true
+        
+        ToggleMenu(b: false)
+        ToggleGame(b: true)
+    }
+    
+    func ToggleMenu(b : Bool)
+    {
+        let value = BoolToCGFloat(b: b)
+        
+        buttonPlay.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        easyDifficulty.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        mediumDifficulty.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        hardDifficulty.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+    }
+    
+    func ToggleGame(b : Bool)
+    {
+        let value = BoolToCGFloat(b: b)
+        
+        if(!b)
+        {
+            RemoveAllCards()
+        }
+        
+        scoreLabel.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        gameBack.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+    }
+    
+    func BoolToCGFloat(b : Bool) -> CGFloat
+    {
+        if(b)
+        {
+            return CGFloat(1)
+        }
+        else
+        {
+            return CGFloat(0)
+        }
+    }
+    
 }
