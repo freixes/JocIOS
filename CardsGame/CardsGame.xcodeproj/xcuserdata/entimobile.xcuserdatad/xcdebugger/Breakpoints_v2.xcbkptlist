@@ -28,12 +28,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CardsGame/GameScene.swift"
-            timestampString = "546286441.560184"
+            timestampString = "547493767.55571"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "277"
-            endingLineNumber = "277"
-            landmarkName = "CreateCardboard()"
+            startingLineNumber = "302"
+            endingLineNumber = "302"
+            landmarkName = "ResetCardsStatus()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

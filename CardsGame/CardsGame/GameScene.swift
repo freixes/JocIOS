@@ -26,6 +26,8 @@ class GameScene: SKScene {
     let cardSizeY : CGFloat = 120
     
     var difficulty : Int!
+    var timer : CFTimeInterval!
+    var time : CFTimeInterval!
     
     var cards : [SKSpriteNode] = []
     var cardsBacks : [SKSpriteNode] = []
@@ -47,7 +49,10 @@ class GameScene: SKScene {
     
     var scoreLabel : SKLabelNode!
     
+    var timeLabel : SKLabelNode!
+    
     var DelayPriorToHidingCards : TimeInterval = 1.5
+    var lastUpdateTimeInterval: CFTimeInterval?
     
     override func didMove(to view: SKView) {
         SetDifficulty(difficultyId: 1)
@@ -65,6 +70,20 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        var delta: CFTimeInterval = currentTime
+        if let luti  = lastUpdateTimeInterval {
+            delta = currentTime - luti
+        }
+        lastUpdateTimeInterval = currentTime
+        
+        
+        if gameIsPlaying {
+            timer = timer - delta
+            if timer < 0 { timer = 0 }
+            timeLabel?.text = "Time: \(Int(timer))"
+            UpdateScore()
+        }
+        
     }
     
     
@@ -75,16 +94,22 @@ class GameScene: SKScene {
             if(nod.name == "Easy")
             {
                 SetDifficulty(difficultyId: 0)
+                timer = 120
+                time = 120
                 PlayGame()
             }
             else if(nod.name == "Medium")
             {
                 SetDifficulty(difficultyId: 1)
+                timer = 210
+                time = 210
                 PlayGame()
             }
             else if(nod.name == "Hard")
             {
                 SetDifficulty(difficultyId: 2)
+                timer = 250
+                time = 250
                 PlayGame()
             }
         }
@@ -320,12 +345,12 @@ class GameScene: SKScene {
             cardsPerColumn = 4
             cardsPerRow = 3
         }
-        else if(difficulty == 0)
+        else if(difficulty == 1)
         {
             cardsPerColumn = 4
             cardsPerRow = 4
         }
-        else if(difficulty == 0)
+        else if(difficulty == 2)
         {
             cardsPerColumn = 5
             cardsPerRow = 4
@@ -347,6 +372,7 @@ class GameScene: SKScene {
     {
         SetTryCount(score : 0)
         SetMatchesCount(score: 0)
+        timer = time
     }
     
     func SetTryCount(score : Int!)
@@ -363,7 +389,8 @@ class GameScene: SKScene {
     
     func UpdateScore()
     {
-        score = matchesCount * (difficulty + 1) * 5 - tryCount
+        
+        score = matchesCount * (difficulty + 1) * 5 - tryCount + Int(timer)
         scoreLabel?.text = "Score: \(score)"
     }
     
@@ -445,6 +472,14 @@ class GameScene: SKScene {
         scoreLabel.color = SKColor.white
         scoreLabel.zPosition = 10
         addChild(scoreLabel)
+        
+        timeLabel = SKLabelNode(fontNamed: "Chalkduster")
+        timeLabel.position = CGPoint(x : -self.view!.bounds.size.width + 175, y : self.view!.bounds.size.height - 150)
+        timeLabel.text = "hello"
+        timeLabel.fontSize = 32
+        timeLabel.color = SKColor.white
+        timeLabel.zPosition = 10
+        addChild(timeLabel)
     }
     
     func GoMenu()
@@ -484,6 +519,7 @@ class GameScene: SKScene {
         
         scoreLabel.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
         gameBack.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        timeLabel.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
     }
     
     func BoolToCGFloat(b : Bool) -> CGFloat
