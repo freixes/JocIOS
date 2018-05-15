@@ -8,9 +8,14 @@
 
 import SpriteKit
 import GameKit
+import AVFoundation
 
-class GameScene: SKScene {
+class GameScene: SKScene, SliderDelegate {
     
+//    let slider = UISlider(frame:CGRect(x: 50, y: 500, width: 300, height: 20))
+    let slider = Slider(width: 300, height: 20, text: NSLocalizedString("Volumen", comment: ""))
+
+    var player: AVAudioPlayer?
     let transitionDuration : TimeInterval = 0.1
     
     //Buttons
@@ -19,6 +24,7 @@ class GameScene: SKScene {
     var mediumDifficulty : SKSpriteNode!
     var hardDifficulty : SKSpriteNode!
     var gameBack : SKSpriteNode!
+    var buttonOptions : SKSpriteNode!
     
     var cardsPerRow : Int = 4
     var cardsPerColumn : Int = 5
@@ -47,6 +53,8 @@ class GameScene: SKScene {
     var tryCount : Int = 0
     var score : Int = 0
     
+    var volume : Float = 0.5
+    
     var scoreLabel : SKLabelNode!
     
     var timeLabel : SKLabelNode!
@@ -58,6 +66,7 @@ class GameScene: SKScene {
         SetDifficulty(difficultyId: 1)
         CreateMenu()
         CreateBackGround()
+        createOptionMenu()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -111,6 +120,14 @@ class GameScene: SKScene {
                 timer = 250
                 time = 250
                 PlayGame()
+            }
+            else if(nod.name == "Options"){
+                GoOptions()
+            }
+            if(nod.name == "GameBack")
+            {
+                ToggleOptions(b: false)
+                GoMenu()
             }
         }
         else
@@ -453,6 +470,26 @@ class GameScene: SKScene {
         hardDifficulty.position = CGPoint(x : 200, y : -50)
         hardDifficulty.name = "Hard"
         addChild(hardDifficulty)
+        
+        buttonOptions = SKSpriteNode(imageNamed : "normal")
+        buttonOptions.zPosition = 10
+        buttonOptions.position = CGPoint(x : 0, y : -150)
+        buttonOptions.name = "Options"
+        addChild(buttonOptions)
+        
+        
+        
+        do{
+            if let url = Bundle.main.url(forResource: "audioTest", withExtension: "mp3"){
+                player = try AVAudioPlayer(contentsOf: url) //allo que pot tirar un error es marca amb el try
+                //volume.value = player?.volume ?? 1.0 //si no pot el primer posa el segon
+            }
+        }catch{
+            print(error) //error es una variable implicita el el catch
+        }
+        
+        player?.volume = volume
+        player?.play()
     }
     
     func CreateGameButtons()
@@ -482,11 +519,29 @@ class GameScene: SKScene {
         addChild(timeLabel)
     }
     
+    func createOptionMenu(){
+
+        slider.position = position
+        slider.sliderDelegate = self
+        addChild(slider)
+        
+        gameBack = SKSpriteNode(imageNamed: "back")
+        gameBack.position = CGPoint(x: -self.view!.bounds.size.width + 125, y: -self.view!.bounds.size.height + 120)
+        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
+        gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
+        gameBack.zPosition = 10
+        gameBack.name = "GameBack"
+        addChild(gameBack)
+        //ToggleMenu(b: false)
+        ToggleOptions(b: false)
+    }
+    
     func GoMenu()
     {
-        gameIsPlaying = false
-        
-        ToggleGame(b: false)
+        if(gameIsPlaying){
+            gameIsPlaying = false
+            ToggleGame(b: false)
+        }
         ToggleMenu(b: true)
     }
     
@@ -497,6 +552,10 @@ class GameScene: SKScene {
         ToggleMenu(b: false)
         ToggleGame(b: true)
     }
+    func GoOptions(){
+        ToggleMenu(b: false)
+        ToggleOptions(b: true)
+    }
     
     func ToggleMenu(b : Bool)
     {
@@ -506,6 +565,14 @@ class GameScene: SKScene {
         easyDifficulty.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
         mediumDifficulty.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
         hardDifficulty.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        buttonOptions.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+    }
+    
+    func ToggleOptions(b : Bool){
+        let value = BoolToCGFloat(b: b)
+        
+        slider.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
+        gameBack.run(SKAction.fadeAlpha(to: value, duration: transitionDuration))
     }
     
     func ToggleGame(b : Bool)
@@ -532,6 +599,12 @@ class GameScene: SKScene {
         {
             return CGFloat(0)
         }
+    }
+    
+    func sliderValueChanged(sender: Slider, value: CGFloat) {
+        print("volume \(value)")
+        volume = Float(value)
+        player?.volume = Float(value)
     }
     
 }
