@@ -62,11 +62,16 @@ class GameScene: SKScene, SliderDelegate {
     var DelayPriorToHidingCards : TimeInterval = 1.5
     var lastUpdateTimeInterval: CFTimeInterval?
     
+    var isInitialized = false
+    
     override func didMove(to view: SKView) {
-        SetDifficulty(difficultyId: 1)
-        CreateMenu()
-        CreateBackGround()
-        createOptionMenu()
+        if !isInitialized {
+            SetDifficulty(difficultyId: 1)
+            CreateMenu()
+            CreateBackGround()
+            createOptionMenu()
+            isInitialized = true
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -438,9 +443,7 @@ class GameScene: SKScene, SliderDelegate {
     func CreateBackGround()
     {
         let background = SKSpriteNode(imageNamed: "Background")
-        background.anchorPoint = CGPoint(x:0.5, y:0.5)
-        background.position = CGPoint(x:0, y:0)
-        background.zPosition = 0
+        background.position = CGPoint(x: size.width / 2, y: size.height / 2)
         background.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
         addChild(background)
     }
@@ -448,32 +451,32 @@ class GameScene: SKScene, SliderDelegate {
     func CreateMenu()
     {
         buttonPlay = SKSpriteNode(imageNamed: "title")
-        buttonPlay.position = CGPoint(x:0, y:100)
+        buttonPlay.position = CGPoint(x: size.width / 2, y: size.height / 2)
         buttonPlay.zPosition = 10
         buttonPlay.name = "title"
         addChild(buttonPlay)
         
         easyDifficulty = SKSpriteNode(imageNamed : "easy")
         easyDifficulty.zPosition = 10
-        easyDifficulty.position = CGPoint(x : -200, y : -50)
+        easyDifficulty.position = CGPoint(x: (size.width / 2) - 200, y: (size.height / 2) - 75)
         easyDifficulty.name = "Easy"
         addChild(easyDifficulty)
         
         mediumDifficulty = SKSpriteNode(imageNamed : "normal")
         mediumDifficulty.zPosition = 10
-        mediumDifficulty.position = CGPoint(x : 0, y : -50)
+        mediumDifficulty.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 75)
         mediumDifficulty.name = "Medium"
         addChild(mediumDifficulty)
         
         hardDifficulty = SKSpriteNode(imageNamed : "hard")
         hardDifficulty.zPosition = 10
-        hardDifficulty.position = CGPoint(x : 200, y : -50)
+        hardDifficulty.position = CGPoint(x: (size.width / 2) + 200, y: (size.height / 2) - 75)
         hardDifficulty.name = "Hard"
         addChild(hardDifficulty)
         
         buttonOptions = SKSpriteNode(imageNamed : "normal")
         buttonOptions.zPosition = 10
-        buttonOptions.position = CGPoint(x : 0, y : -150)
+        buttonOptions.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 150)
         buttonOptions.name = "Options"
         addChild(buttonOptions)
         
@@ -496,7 +499,7 @@ class GameScene: SKScene, SliderDelegate {
     {
         gameBack = SKSpriteNode(imageNamed: "back")
         gameBack.position = CGPoint(x: -self.view!.bounds.size.width + 125, y: -self.view!.bounds.size.height + 120)
-        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
+//        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
         gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
         gameBack.zPosition = 10
         gameBack.name = "GameBack"
@@ -553,8 +556,12 @@ class GameScene: SKScene, SliderDelegate {
         ToggleGame(b: true)
     }
     func GoOptions(){
-        ToggleMenu(b: false)
-        ToggleOptions(b: true)
+        if let view = self.view {
+            let scene = OptionsScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
+            scene.returnScene = self
+            scene.scaleMode = .aspectFill
+            view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
+        }
     }
     
     func ToggleMenu(b : Bool)
