@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		574F43E420AC8700001892B6 /* PlayScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 574F43E320AC8700001892B6 /* PlayScene.swift */; };
 		BA6DD35220AB248C003CB763 /* audioTest.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = BA6DD35120AB248B003CB763 /* audioTest.mp3 */; };
 		BA6DD35420AB331A003CB763 /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6DD35320AB331A003CB763 /* Slider.swift */; };
 		BA6DD35820AB4BB1003CB763 /* OptionsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6DD35720AB4BB1003CB763 /* OptionsScene.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		574F43E320AC8700001892B6 /* PlayScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayScene.swift; sourceTree = "<group>"; };
 		BA6DD35120AB248B003CB763 /* audioTest.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = audioTest.mp3; sourceTree = "<group>"; };
 		BA6DD35320AB331A003CB763 /* Slider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
 		BA6DD35720AB4BB1003CB763 /* OptionsScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsScene.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 				BA8767C320863E7B007896C5 /* Info.plist */,
 				BA6DD35720AB4BB1003CB763 /* OptionsScene.swift */,
 				BA6DD35320AB331A003CB763 /* Slider.swift */,
+				574F43E320AC8700001892B6 /* PlayScene.swift */,
 				BA6DD35B20AB5E26003CB763 /* LeaderboardsScene.swift */,
 			);
 			path = CardsGame;
@@ -169,6 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA6DD35C20AB5E26003CB763 /* LeaderboardsScene.swift in Sources */,
+				574F43E420AC8700001892B6 /* PlayScene.swift in Sources */,
 				BA8767B820863E7B007896C5 /* GameScene.swift in Sources */,
 				BA8767BA20863E7B007896C5 /* GameViewController.swift in Sources */,
 				BA6DD35420AB331A003CB763 /* Slider.swift in Sources */,
