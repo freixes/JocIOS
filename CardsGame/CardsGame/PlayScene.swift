@@ -45,10 +45,10 @@ class PlayScene: SKScene {
     var timeLabel : SKLabelNode!
     
     var DelayPriorToHidingCards : TimeInterval = 1.5
-    var lastUpdateTimeInterval: CFTimeInterval?
+    var lastUpdateTimeInterval: CFTimeInterval? = 0
     
     var gameBack : SKSpriteNode!
-   
+    var firstFrame = true
     override func didMove(to view: SKView) {
         
         SetDifficulty(difficultyId: difficulty)
@@ -62,18 +62,20 @@ class PlayScene: SKScene {
     
     override func update(_ currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        
         var delta: CFTimeInterval = currentTime
         if let luti  = lastUpdateTimeInterval {
             delta = currentTime - luti
         }
         lastUpdateTimeInterval = currentTime
         
-        
+        if(!firstFrame){
         timer = timer - delta
         if timer < 0 { timer = 0 }
         timeLabel?.text = "Time: \(Int(timer))"
         UpdateScore()
-        
+        }
+        firstFrame = false
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
