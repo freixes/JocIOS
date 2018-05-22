@@ -48,18 +48,19 @@ class PlayScene: SKScene {
     var lastUpdateTimeInterval: CFTimeInterval?
     
     var gameBack : SKSpriteNode!
-    
+    var gameIsPlaying = false
    
     override func didMove(to view: SKView) {
         
-        gameBack = SKSpriteNode(imageNamed: "back")
-        gameBack.position = CGPoint(x: (size.width / 2) + 200, y: (size.height / 2) - 75)
-        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
-        gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
-        gameBack.zPosition = 10
-        gameBack.name = "GameBack"
-        addChild(gameBack)
-        
+        SetDifficulty(difficultyId: difficulty)
+        CreateGameButtons()
+        RemoveAllCards()
+        FillCardSequence()
+        CreateCardboard()
+        ResetCardsStatus()
+        gameIsPlaying = true
+        timer = 120
+        time = 120
     }
     
     override func update(_ currentTime: CFTimeInterval) {
@@ -70,11 +71,12 @@ class PlayScene: SKScene {
         }
         lastUpdateTimeInterval = currentTime
         
+        
             timer = timer - delta
             if timer < 0 { timer = 0 }
             timeLabel?.text = "Time: \(Int(timer))"
             UpdateScore()
-    
+        
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -166,8 +168,8 @@ class PlayScene: SKScene {
         {
             for j in 0...cardsPerColumn - 1
             {
-                let posX : CGFloat = -self.size.width/2 + offsetX + cardSizeX / 2 + CGFloat(i) * (cardSizeX + offsetX)
-                let posY : CGFloat = self.size.height/2 - offsetY - cardSizeY / 2 - CGFloat(j) * (cardSizeY + offsetY)
+                let posX : CGFloat = /*-self.size.width/2 + */offsetX + cardSizeX / 2 + CGFloat(i) * (cardSizeX + offsetX)
+                let posY : CGFloat = /*self.size.height/2 - */offsetY + cardSizeY / 2 + CGFloat(j) * (cardSizeY + offsetY)
                 CreateCard(posX : posX, posY : posY, idx : (i * cardsPerColumn) + j)
             }
         }
@@ -316,8 +318,7 @@ class PlayScene: SKScene {
     
     func ResetGame()
     {
-       // CreateGameButtons()
-        
+        CreateGameButtons()
         RemoveAllCards()
         FillCardSequence()
         CreateCardboard()
@@ -390,6 +391,36 @@ class PlayScene: SKScene {
         background.position = CGPoint(x: size.width / 2, y: size.height / 2)
         background.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
         addChild(background)
+    }
+    
+    func CreateGameButtons()
+    {
+        CreateBackGround()
+        
+        gameBack = SKSpriteNode(imageNamed: "back")
+        gameBack.position = CGPoint(x: (size.width / 2) - 300, y: 75)
+        gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
+        gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
+        gameBack.zPosition = 10
+        gameBack.name = "GameBack"
+        addChild(gameBack)
+        
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.position = CGPoint(x : size.width/2 , y : size.height - 40)
+        scoreLabel.text = "hello"
+        scoreLabel.fontSize = 32
+        scoreLabel.color = SKColor.white
+        scoreLabel.zPosition = 10
+        addChild(scoreLabel)
+        
+        timeLabel = SKLabelNode(fontNamed: "Chalkduster")
+        timeLabel.position = CGPoint(x : size.width - 150 , y : size.height - 40)
+        timeLabel.text = "hello"
+        timeLabel.fontSize = 32
+        timeLabel.color = SKColor.white
+        timeLabel.zPosition = 10
+        addChild(timeLabel)
     }
     
     

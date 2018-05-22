@@ -18,12 +18,12 @@ class OptionsScene: SKScene, SliderDelegate {
     var gameBack : SKSpriteNode!
     
     override func didMove(to view: SKView) {
-        slider.position = position
+        slider.position = CGPoint(x: (size.width / 2), y: size.height/2)
         slider.sliderDelegate = self
         addChild(slider)
         
         gameBack = SKSpriteNode(imageNamed: "back")
-        gameBack.position = CGPoint(x: (size.width / 2) + 200, y: (size.height / 2) - 75)
+        gameBack.position = CGPoint(x: (size.width / 2) - 300, y: 75)
         gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
         gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
         gameBack.zPosition = 10
