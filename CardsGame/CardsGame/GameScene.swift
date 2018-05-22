@@ -4,10 +4,12 @@
 //
 //  Created by Enti Mobile on 17/4/18.
 //  Copyright © 2018 Enti Mobile. All rights reserved.
-//
+//  193755 pw iphone enti
 
 import SpriteKit
 import GameKit
+import Firebase
+import UserNotifications
 import AVFoundation
 
 class GameScene: SKScene {
@@ -17,6 +19,8 @@ class GameScene: SKScene {
 
     var player: AVAudioPlayer?
     let transitionDuration : TimeInterval = 0.1
+    
+    
     
     //Buttons
     var buttonPlay : SKSpriteNode!
@@ -33,7 +37,6 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         CreateMenu()
-        
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -127,7 +130,7 @@ class GameScene: SKScene {
         do{
             if let url = Bundle.main.url(forResource: "audioTest", withExtension: "mp3"){
                 player = try AVAudioPlayer(contentsOf: url) //allo que pot tirar un error es marca amb el try
-                //volume.value = player?.volume ?? 1.0 //si no pot el primer posa el segon
+                volume = UserDefaults.standard.float(forKey: "MUSIC_VOLUME") //si no pot el primer posa el segon
             }
         }catch{
             print(error) //error es una variable implicita el el catch
@@ -142,6 +145,7 @@ class GameScene: SKScene {
         if let view = self.view {
             let scene = OptionsScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
             scene.returnScene = self
+            scene.slider.value = CGFloat( UserDefaults.standard.float(forKey: "MUSIC_VOLUME"))
             scene.scaleMode = .aspectFill
             view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }

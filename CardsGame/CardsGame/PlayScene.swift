@@ -49,6 +49,8 @@ class PlayScene: SKScene {
     
     var gameBack : SKSpriteNode!
     var firstFrame = true
+    
+    
     override func didMove(to view: SKView) {
         
         SetDifficulty(difficultyId: difficulty)

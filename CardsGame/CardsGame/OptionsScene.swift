@@ -18,7 +18,8 @@ class OptionsScene: SKScene, SliderDelegate {
     var gameBack : SKSpriteNode!
     
     override func didMove(to view: SKView) {
-        slider.position = CGPoint(x: (size.width / 2), y: size.height/2)
+        slider.position = CGPoint(x: (size.width / 2) - slider.width/2, y: size.height/2)
+        
         slider.sliderDelegate = self
         addChild(slider)
         
@@ -34,6 +35,7 @@ class OptionsScene: SKScene, SliderDelegate {
     
     
     func sliderValueChanged(sender: Slider, value: CGFloat) {
+        UserDefaults.standard.set(sender.value, forKey: "MUSIC_VOLUME")
         
     }
     
@@ -56,6 +58,7 @@ class OptionsScene: SKScene, SliderDelegate {
     
     func GoMenu(){
         if let view = self.view, let returnScene = returnScene {
+            
             view.presentScene(returnScene, transition: .flipVertical(withDuration: 0.2))
         }
     }
