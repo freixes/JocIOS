@@ -8,18 +8,16 @@
 
 import SpriteKit
 import GameKit
-import Firebase
 import UserNotifications
 import AVFoundation
+//import CoreMotion
 
 class GameScene: SKScene {
-    
-//    let slider = UISlider(frame:CGRect(x: 50, y: 500, width: 300, height: 20))
-    let slider = Slider(width: 300, height: 20, text: NSLocalizedString("Volumen", comment: ""))
 
+    
+    
     var player: AVAudioPlayer?
     let transitionDuration : TimeInterval = 0.1
-    
     
     
     //Buttons
@@ -28,6 +26,7 @@ class GameScene: SKScene {
     var mediumDifficulty : SKSpriteNode!
     var hardDifficulty : SKSpriteNode!
     var buttonOptions : SKSpriteNode!
+    var buttonLeaderBoard : SKSpriteNode!
     
     
     var difficulty : Int!
@@ -37,6 +36,7 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         CreateMenu()
+        //StartGyros()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -51,24 +51,27 @@ class GameScene: SKScene {
     
     func ProcessItemTouch(nod : SKSpriteNode)
     {
-           if(nod.name == "Easy")
-            {
-                difficulty = 0
-                PlayGame()
-            }
-            else if(nod.name == "Medium")
-            {
-                difficulty = 1
-                PlayGame()
-            }
-            else if(nod.name == "Hard")
-            {
-                difficulty = 2
-                PlayGame()
-            }
-            else if(nod.name == "Options"){
-                GoOptions()
-            }
+       if(nod.name == "Easy")
+        {
+            difficulty = 0
+            PlayGame()
+        }
+        else if(nod.name == "Medium")
+        {
+            difficulty = 1
+            PlayGame()
+        }
+        else if(nod.name == "Hard")
+        {
+            difficulty = 2
+            PlayGame()
+        }
+        else if(nod.name == "Options"){
+            GoOptions()
+        }
+        else if(nod.name == "LeaderBoard"){
+            GoLeaderBoard()
+        }
     }
     
     func PlayGame()
@@ -119,6 +122,8 @@ class GameScene: SKScene {
         hardDifficulty.name = "Hard"
         addChild(hardDifficulty)
         
+        
+        
         buttonOptions = SKSpriteNode(imageNamed : "normal")
         buttonOptions.zPosition = 10
         buttonOptions.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 150)
@@ -126,11 +131,23 @@ class GameScene: SKScene {
         addChild(buttonOptions)
         
         
+        buttonLeaderBoard = SKSpriteNode(imageNamed : "normal")
+        buttonLeaderBoard.zPosition = 10
+        buttonLeaderBoard.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 250)
+        buttonLeaderBoard.name = "LeaderBoard"
+        addChild(buttonLeaderBoard)
+        
+        
+        
         
         do{
             if let url = Bundle.main.url(forResource: "audioTest", withExtension: "mp3"){
                 player = try AVAudioPlayer(contentsOf: url) //allo que pot tirar un error es marca amb el try
-                volume = UserDefaults.standard.float(forKey: "MUSIC_VOLUME") //si no pot el primer posa el segon
+                if let _ = UserDefaults.standard.object(forKey: "MUSIC_VOLUME") {
+                    volume = UserDefaults.standard.float(forKey: "MUSIC_VOLUME")
+                } else {
+                    volume = 1.0
+                }
             }
         }catch{
             print(error) //error es una variable implicita el el catch
@@ -145,12 +162,43 @@ class GameScene: SKScene {
         if let view = self.view {
             let scene = OptionsScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
             scene.returnScene = self
-            scene.slider.value = CGFloat( UserDefaults.standard.float(forKey: "MUSIC_VOLUME"))
+            scene.slider.value = CGFloat(volume)
             scene.scaleMode = .aspectFill
             view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
     
+    func GoLeaderBoard(){
+        if let view = self.view {
+            let scene = LeaderboardsScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
+            scene.returnScene = self
+            
+            scene.scaleMode = .aspectFill
+            view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
+        }
+    }
     
+    /*func StartGyros() {
+        if motion.isGyroAvailable {
+            self.motion.gyroUpdateInterval = 1.0 / 60.0
+            self.motion.startGyroUpdates()
+            
+            // Configure a timer to fetch the accelerometer data.
+            self.timer = Timer(fire: Date(), interval: (1.0/60.0),
+                               repeats: true, block: { (timer) in
+                                // Get the gyro data.
+                                if let data = self.motion.gyroData {
+                                    let x = data.rotationRate.x
+                                    let y = data.rotationRate.y
+                                    let z = data.rotationRate.z
+                                    
+                                    // Use the gyroscope data in your app.
+                                }
+            })
+            
+            // Add the timer to the current run loop.
+            RunLoop.current.add(self.timer!, forMode: .defaultRunLoopMode)
+        }
+    }*/
     
 }

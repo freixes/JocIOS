@@ -7,14 +7,19 @@
 //
 
 import UIKit
+import Firebase
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate  {
 
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        FirebaseApp.configure()
+        setupNotifications(application: application)
+        Messaging.messaging().delegate = self
         // Override point for customization after application launch.
         return true
     }
@@ -40,7 +45,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        print("Firebase registration token: \(fcmToken)")
+        
+        // TODO: If necessary send token to application server.
+        // Note: This callback is fired at each app startup and whenever a new token is generated.
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        debugPrint(response)
+        completionHandler()
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        debugPrint(notification)
+        completionHandler([])
+    }
+    
+    
+    func setupNotifications(application: UIApplication) {
+        UNUserNotificationCenter.current().delegate = self
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {_, _ in })
+        application.registerForRemoteNotifications()
+        
+        let generalCategory = UNNotificationCategory(identifier: "GENERAL",
+                                                     actions: [],
+                                                     intentIdentifiers: [],
+                                                     options: .customDismissAction)
+        
+        // Create the custom actions for the TIMER_EXPIRED category.
+        let snoozeAction = UNNotificationAction(identifier: "SNOOZE_ACTION",
+                                                title: "Snooze",
+                                                options: UNNotificationActionOptions(rawValue: 0))
+        let stopAction = UNNotificationAction(identifier: "STOP_ACTION",
+                                              title: "Stop",
+                                              options: .foreground)
+        
+        let expiredCategory = UNNotificationCategory(identifier: "TIMER_EXPIRED",
+                                                     actions: [snoozeAction, stopAction],
+                                                     intentIdentifiers: [],
+                                                     options: UNNotificationCategoryOptions(rawValue: 0))
+        
+        // Register the notification categories.
+        let center = UNUserNotificationCenter.current()
+        center.setNotificationCategories([generalCategory, expiredCategory])
+    }
 
 }
 

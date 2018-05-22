@@ -20,6 +20,7 @@
 		BA8767BD20863E7B007896C5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA8767BB20863E7B007896C5 /* Main.storyboard */; };
 		BA8767BF20863E7B007896C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA8767BE20863E7B007896C5 /* Assets.xcassets */; };
 		BA8767C220863E7B007896C5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA8767C020863E7B007896C5 /* LaunchScreen.storyboard */; };
+		BAD8472220B4895E000C9926 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BAD8472120B4895E000C9926 /* GoogleService-Info.plist */; };
 		BBF13B5FBE2DFAAFCD2696FC /* Pods_CardsGame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23B12A4587A1088367FFEFC9 /* Pods_CardsGame.framework */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		BA8767BE20863E7B007896C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BA8767C120863E7B007896C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BA8767C320863E7B007896C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BAD8472120B4895E000C9926 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		E7C0EF7CA3FA19BDB48ADA2C /* Pods-CardsGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CardsGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CardsGame/Pods-CardsGame.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,6 +105,7 @@
 				BA8767BB20863E7B007896C5 /* Main.storyboard */,
 				BA8767BE20863E7B007896C5 /* Assets.xcassets */,
 				BA8767C020863E7B007896C5 /* LaunchScreen.storyboard */,
+				BAD8472120B4895E000C9926 /* GoogleService-Info.plist */,
 				BA8767C320863E7B007896C5 /* Info.plist */,
 				BA6DD35720AB4BB1003CB763 /* OptionsScene.swift */,
 				BA6DD35320AB331A003CB763 /* Slider.swift */,
@@ -188,6 +191,7 @@
 				BA6DD35220AB248C003CB763 /* audioTest.mp3 in Resources */,
 				BA8767C220863E7B007896C5 /* LaunchScreen.storyboard in Resources */,
 				BA8767B620863E7B007896C5 /* Actions.sks in Resources */,
+				BAD8472220B4895E000C9926 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
