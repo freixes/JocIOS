@@ -48,7 +48,6 @@ class PlayScene: SKScene {
     var lastUpdateTimeInterval: CFTimeInterval?
     
     var gameBack : SKSpriteNode!
-    var gameIsPlaying = false
    
     override func didMove(to view: SKView) {
         
@@ -58,9 +57,7 @@ class PlayScene: SKScene {
         FillCardSequence()
         CreateCardboard()
         ResetCardsStatus()
-        gameIsPlaying = true
-        timer = 120
-        time = 120
+ 
     }
     
     override func update(_ currentTime: CFTimeInterval) {
@@ -72,10 +69,10 @@ class PlayScene: SKScene {
         lastUpdateTimeInterval = currentTime
         
         
-            timer = timer - delta
-            if timer < 0 { timer = 0 }
-            timeLabel?.text = "Time: \(Int(timer))"
-            UpdateScore()
+        timer = timer - delta
+        if timer < 0 { timer = 0 }
+        timeLabel?.text = "Time: \(Int(timer))"
+        UpdateScore()
         
     }
     
@@ -301,16 +298,22 @@ class PlayScene: SKScene {
         
         if(difficulty == 0)
         {
+            timer = 120
+            time = 120
             cardsPerColumn = 4
             cardsPerRow = 3
         }
         else if(difficulty == 1)
         {
+            timer = 210
+            time = 210
             cardsPerColumn = 4
             cardsPerRow = 4
         }
         else if(difficulty == 2)
         {
+            timer = 250
+            time = 250
             cardsPerColumn = 5
             cardsPerRow = 4
         }

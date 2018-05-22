@@ -23,46 +23,13 @@ class GameScene: SKScene {
     var easyDifficulty : SKSpriteNode!
     var mediumDifficulty : SKSpriteNode!
     var hardDifficulty : SKSpriteNode!
-    var gameBack : SKSpriteNode!
     var buttonOptions : SKSpriteNode!
     
-    var cardsPerRow : Int = 4
-    var cardsPerColumn : Int = 5
-    let cardSizeX : CGFloat = 80
-    let cardSizeY : CGFloat = 120
     
     var difficulty : Int!
-    var timer : CFTimeInterval!
-    var time : CFTimeInterval!
-    
-    var cards : [SKSpriteNode] = []
-    var cardsBacks : [SKSpriteNode] = []
-    var cardsStatus : [Bool] = []
-    
-    var cardsSequence : [Int] = []
-    
-    var selectedCardIndex1 : Int = -1
-    var selectedCardIndex2 : Int = -1
-    var selectedCard1Value : String = ""
-    var selectedCard2Value : String = ""
-    
-    var gameIsPlaying : Bool = false
-    var lockInteraction : Bool = false
-    
-    var matchesCount : Int = 0
-    var tryCount : Int = 0
-    var score : Int = 0
     
     var volume : Float = 0.5
-    
-    var scoreLabel : SKLabelNode!
-    
-    var timeLabel : SKLabelNode!
-    
-    var DelayPriorToHidingCards : TimeInterval = 1.5
-    var lastUpdateTimeInterval: CFTimeInterval?
-    
-    var isInitialized = false
+
     
     override func didMove(to view: SKView) {
         CreateMenu()
@@ -83,17 +50,17 @@ class GameScene: SKScene {
     {
            if(nod.name == "Easy")
             {
-                SetDifficulty(difficultyId: 0)
+                difficulty = 0
                 PlayGame()
             }
             else if(nod.name == "Medium")
             {
-                SetDifficulty(difficultyId: 1)
+                difficulty = 1
                 PlayGame()
             }
             else if(nod.name == "Hard")
             {
-                SetDifficulty(difficultyId: 2)
+                difficulty = 2
                 PlayGame()
             }
             else if(nod.name == "Options"){
@@ -108,42 +75,11 @@ class GameScene: SKScene {
             let scene = PlayScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
             scene.returnScene = self
             scene.difficulty = difficulty
-            scene.time = time
-            scene.timer = timer
             scene.scaleMode = .aspectFill
             view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
-    
-    func SetDifficulty(difficultyId : Int)
-    {
-        difficulty = difficultyId
-        
-        if(difficulty == 0)
-        {
-            timer = 120
-            time = 120
-            cardsPerColumn = 4
-            cardsPerRow = 3
-        }
-        else if(difficulty == 1)
-        {
-            timer = 210
-            time = 210
-            cardsPerColumn = 4
-            cardsPerRow = 4
-        }
-        else if(difficulty == 2)
-        {
-            timer = 250
-            time = 250
-            cardsPerColumn = 5
-            cardsPerRow = 4
-        }
-    }
-    
-   
-    
+
     func CreateBackGround()
     {
         let background = SKSpriteNode(imageNamed: "Background")
