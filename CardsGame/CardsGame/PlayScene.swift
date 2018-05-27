@@ -133,6 +133,7 @@ class PlayScene: SKScene {
                                             self.HideSelectedCards()
                                             self.SetMatchesCount(score: self.matchesCount + 1)
                                             if(self.CheckIfGameOver() == true) {
+                                                self.UpdateRanking()
                                                 self.GoMenu()
                                             }
                                         }
@@ -154,6 +155,21 @@ class PlayScene: SKScene {
         }
     }
     
+    func UpdateRanking()
+    {
+        if(UserDefaults.standard.integer(forKey: "rankingFirst") < score){
+            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "rankingSecond"), forKey: "rankingThird")
+            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "rankingFirst"), forKey: "rankingSecond")
+            UserDefaults.standard.set(score, forKey: "rankingFirst")
+        }
+        else if(UserDefaults.standard.integer(forKey: "rankingSecond") < score){
+            UserDefaults.standard.set(UserDefaults.standard.integer(forKey: "rankingSecond"), forKey: "rankingThird")
+            UserDefaults.standard.set(score, forKey: "rankingSecond")
+        }
+        else if(UserDefaults.standard.integer(forKey: "rankingThird") < score){
+                UserDefaults.standard.set(score, forKey: "rankingThird")
+        }
+    }
     
     func CreateCardboard()
     {
@@ -361,7 +377,6 @@ class PlayScene: SKScene {
     
     func UpdateScore()
     {
-        
         score = matchesCount * (difficulty + 1) * 5
         score = score - tryCount + Int(timer)
         scoreLabel?.text = "Score: \(score)"
@@ -413,7 +428,6 @@ class PlayScene: SKScene {
         gameBack.name = "GameBack"
         addChild(gameBack)
         
-        
         scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
         scoreLabel.position = CGPoint(x : size.width/2 , y : size.height - 40)
         scoreLabel.text = "hello"
@@ -430,6 +444,4 @@ class PlayScene: SKScene {
         timeLabel.zPosition = 10
         addChild(timeLabel)
     }
-    
-    
 }

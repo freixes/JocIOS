@@ -13,12 +13,9 @@ import AVFoundation
 //import CoreMotion
 
 class GameScene: SKScene {
-
-    
     
     var player: AVAudioPlayer?
     let transitionDuration : TimeInterval = 0.1
-    
     
     //Buttons
     var buttonPlay : SKSpriteNode!
@@ -28,11 +25,8 @@ class GameScene: SKScene {
     var buttonOptions : SKSpriteNode!
     var buttonLeaderBoard : SKSpriteNode!
     
-    
     var difficulty : Int!
-    
     var volume : Float = 0.5
-
     
     override func didMove(to view: SKView) {
         CreateMenu()
@@ -46,8 +40,6 @@ class GameScene: SKScene {
         
         self.ProcessItemTouch(nod: touchedNode)
     }
-    
-    
     
     func ProcessItemTouch(nod : SKSpriteNode)
     {
@@ -76,7 +68,6 @@ class GameScene: SKScene {
     
     func PlayGame()
     {
-        
         if let view = self.view {
             let scene = PlayScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
             scene.returnScene = self
@@ -122,23 +113,17 @@ class GameScene: SKScene {
         hardDifficulty.name = "Hard"
         addChild(hardDifficulty)
         
-        
-        
         buttonOptions = SKSpriteNode(imageNamed : "normal")
         buttonOptions.zPosition = 10
         buttonOptions.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 150)
         buttonOptions.name = "Options"
         addChild(buttonOptions)
         
-        
         buttonLeaderBoard = SKSpriteNode(imageNamed : "normal")
         buttonLeaderBoard.zPosition = 10
         buttonLeaderBoard.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 250)
         buttonLeaderBoard.name = "LeaderBoard"
         addChild(buttonLeaderBoard)
-        
-        
-        
         
         do{
             if let url = Bundle.main.url(forResource: "audioTest", withExtension: "mp3"){
@@ -200,5 +185,4 @@ class GameScene: SKScene {
             RunLoop.current.add(self.timer!, forMode: .defaultRunLoopMode)
         }
     }*/
-    
 }
