@@ -9,9 +9,12 @@
 import SpriteKit
 import GameKit
 import AVFoundation
+import CoreMotion
 
 class PlayScene: SKScene {
     
+    var motionManager=CMMotionManager()
+    let motionQueue = OperationQueue()
     var returnScene: SKScene?
     var difficulty: Int!
     
@@ -49,7 +52,7 @@ class PlayScene: SKScene {
     
     var gameBack : SKSpriteNode!
     var firstFrame = true
-    
+    var lastZ = 0.0
     
     override func didMove(to view: SKView) {
         
@@ -59,6 +62,26 @@ class PlayScene: SKScene {
         FillCardSequence()
         CreateCardboard()
         ResetCardsStatus()
+        
+        if motionManager.isAccelerometerAvailable{
+            motionManager.accelerometerUpdateInterval=0.1; //Intervalo actualización
+            motionManager.startAccelerometerUpdates(to: motionQueue, withHandler:
+                {[weak self](data: CMAccelerometerData?,error: Error?) in //[weak self] self dentro del contexto es un optional
+                    if let data=data{
+                        self?.physicsWorld.gravity=CGVector(dx:
+                            data.acceleration.x, dy:
+                            data.acceleration.y);
+                        
+                        //ball?.position = CGPoint(x: data.acceleration.y*300, y: data.acceleration.x*300)
+                        if((self?.lastZ)! < 0.0 && data.acceleration.z > 0.0){
+                            self?.GoMenu()
+                        }
+                        
+                        self?.lastZ = data.acceleration.z
+                        print("x: \(data.acceleration.x), y: \(data.acceleration.y), z: \(data.acceleration.z)");
+                    }
+            })
+        }
  
     }
     
@@ -408,10 +431,11 @@ class PlayScene: SKScene {
     //Scene management
     
     func CreateBackGround()
-    {
+    {        
         let background = SKSpriteNode(imageNamed: "Background")
         background.position = CGPoint(x: size.width / 2, y: size.height / 2)
         background.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
+        background.name = "Background"
         addChild(background)
     }
     

@@ -10,9 +10,11 @@ import SpriteKit
 import GameKit
 import UserNotifications
 import AVFoundation
-//import CoreMotion
+import CoreMotion
 
 class GameScene: SKScene {
+    
+    
     
     var player: AVAudioPlayer?
     let transitionDuration : TimeInterval = 0.1
@@ -31,6 +33,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         CreateMenu()
         //StartGyros()
+        
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
