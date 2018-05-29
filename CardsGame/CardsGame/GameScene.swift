@@ -93,36 +93,36 @@ class GameScene: SKScene {
         CreateBackGround()
         
         buttonPlay = SKSpriteNode(imageNamed: "title")
-        buttonPlay.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        buttonPlay.position = CGPoint(x: size.width / 2, y: size.height / 2 + 250)
         buttonPlay.zPosition = 10
         buttonPlay.name = "title"
         addChild(buttonPlay)
         
         easyDifficulty = SKSpriteNode(imageNamed : "easy")
         easyDifficulty.zPosition = 10
-        easyDifficulty.position = CGPoint(x: (size.width / 2) - 200, y: (size.height / 2) - 75)
+        easyDifficulty.position = CGPoint(x: (size.width / 2) - 200, y: (size.height / 2))
         easyDifficulty.name = "Easy"
         addChild(easyDifficulty)
         
-        mediumDifficulty = SKSpriteNode(imageNamed : "normal")
+        mediumDifficulty = SKSpriteNode(imageNamed : "medium")
         mediumDifficulty.zPosition = 10
-        mediumDifficulty.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 75)
+        mediumDifficulty.position = CGPoint(x: (size.width / 2), y: (size.height / 2))
         mediumDifficulty.name = "Medium"
         addChild(mediumDifficulty)
         
         hardDifficulty = SKSpriteNode(imageNamed : "hard")
         hardDifficulty.zPosition = 10
-        hardDifficulty.position = CGPoint(x: (size.width / 2) + 200, y: (size.height / 2) - 75)
+        hardDifficulty.position = CGPoint(x: (size.width / 2) + 200, y: (size.height / 2))
         hardDifficulty.name = "Hard"
         addChild(hardDifficulty)
         
-        buttonOptions = SKSpriteNode(imageNamed : "normal")
+        buttonOptions = SKSpriteNode(imageNamed : "options")
         buttonOptions.zPosition = 10
         buttonOptions.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 150)
         buttonOptions.name = "Options"
         addChild(buttonOptions)
         
-        buttonLeaderBoard = SKSpriteNode(imageNamed : "normal")
+        buttonLeaderBoard = SKSpriteNode(imageNamed : "ranking")
         buttonLeaderBoard.zPosition = 10
         buttonLeaderBoard.position = CGPoint(x: (size.width / 2), y: (size.height / 2) - 250)
         buttonLeaderBoard.name = "LeaderBoard"

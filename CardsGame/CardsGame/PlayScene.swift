@@ -477,16 +477,15 @@ class PlayScene: SKScene {
         CreateBackGround()
         
         gameBack = SKSpriteNode(imageNamed: "back")
-        gameBack.position = CGPoint(x: (size.width / 2) - 300, y: 75)
         gameBack.anchorPoint = CGPoint(x : 0.5, y : 0.5)
-        gameBack.size = CGSize(width: gameBack.size.width, height: gameBack.size.height / 2)
-        gameBack.position = CGPoint(x: gameBack.size.width/2, y: 75)
+        gameBack.size = CGSize(width: gameBack.size.width * 0.75, height: gameBack.size.height / 2)
+        gameBack.position = CGPoint(x: gameBack.size.width/2, y: 45)
         gameBack.zPosition = 10
         gameBack.name = "GameBack"
         addChild(gameBack)
         
         scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
-        scoreLabel.position = CGPoint(x : size.width/2 , y : size.height - 40)
+        scoreLabel.position = CGPoint(x : size.width/2 - 150 , y : size.height - 40)
         scoreLabel.text = "hello"
         scoreLabel.fontSize = 32
         scoreLabel.color = SKColor.white

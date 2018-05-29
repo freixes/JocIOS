@@ -43,6 +43,7 @@
 		BA8767C120863E7B007896C5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BA8767C320863E7B007896C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BAD8472120B4895E000C9926 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BAE9FC0C20BDBC9C00255467 /* CardsGame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CardsGame.entitlements; sourceTree = "<group>"; };
 		E7C0EF7CA3FA19BDB48ADA2C /* Pods-CardsGame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CardsGame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CardsGame/Pods-CardsGame.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -96,21 +97,22 @@
 		BA8767B020863E7B007896C5 /* CardsGame */ = {
 			isa = PBXGroup;
 			children = (
+				BAE9FC0C20BDBC9C00255467 /* CardsGame.entitlements */,
 				BA6DD35020AB2442003CB763 /* Music */,
-				BA8767B120863E7B007896C5 /* AppDelegate.swift */,
 				BA8767B320863E7B007896C5 /* GameScene.sks */,
 				BA8767B520863E7B007896C5 /* Actions.sks */,
-				BA8767B720863E7B007896C5 /* GameScene.swift */,
-				BA8767B920863E7B007896C5 /* GameViewController.swift */,
 				BA8767BB20863E7B007896C5 /* Main.storyboard */,
 				BA8767BE20863E7B007896C5 /* Assets.xcassets */,
 				BA8767C020863E7B007896C5 /* LaunchScreen.storyboard */,
 				BAD8472120B4895E000C9926 /* GoogleService-Info.plist */,
 				BA8767C320863E7B007896C5 /* Info.plist */,
-				BA6DD35720AB4BB1003CB763 /* OptionsScene.swift */,
-				BA6DD35320AB331A003CB763 /* Slider.swift */,
+				BA8767B120863E7B007896C5 /* AppDelegate.swift */,
+				BA8767B920863E7B007896C5 /* GameViewController.swift */,
 				574F43E320AC8700001892B6 /* PlayScene.swift */,
+				BA8767B720863E7B007896C5 /* GameScene.swift */,
+				BA6DD35720AB4BB1003CB763 /* OptionsScene.swift */,
 				BA6DD35B20AB5E26003CB763 /* LeaderboardsScene.swift */,
+				BA6DD35320AB331A003CB763 /* Slider.swift */,
 			);
 			path = CardsGame;
 			sourceTree = "<group>";
@@ -159,6 +161,11 @@
 					BA8767AD20863E7B007896C5 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -420,11 +427,12 @@
 			baseConfigurationReference = E7C0EF7CA3FA19BDB48ADA2C /* Pods-CardsGame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CardsGame/CardsGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WYKR2235FR;
+				DEVELOPMENT_TEAM = K8N49L3NZK;
 				INFOPLIST_FILE = CardsGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cat.enti.CardsGame;
+				PRODUCT_BUNDLE_IDENTIFIER = cat.enti.CardsGame2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -436,11 +444,12 @@
 			baseConfigurationReference = 49418B13A5C3A8C2BF0A4BF9 /* Pods-CardsGame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = CardsGame/CardsGame.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WYKR2235FR;
+				DEVELOPMENT_TEAM = K8N49L3NZK;
 				INFOPLIST_FILE = CardsGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = cat.enti.CardsGame;
+				PRODUCT_BUNDLE_IDENTIFIER = cat.enti.CardsGame2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
