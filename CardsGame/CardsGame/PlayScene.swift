@@ -13,7 +13,7 @@ import CoreMotion
 
 class PlayScene: SKScene {
     
-    var motionManager=CMMotionManager()
+    var motionManager = CMMotionManager()
     let motionQueue = OperationQueue()
     var returnScene: SKScene?
     var difficulty: Int!
@@ -25,6 +25,11 @@ class PlayScene: SKScene {
     
     var timer : CFTimeInterval!
     var time : CFTimeInterval!
+    var gyroTimer : Timer!
+    
+    var pauseLayer : SKSpriteNode!
+    var pauseState : Bool = false
+    var pauseTimer : TimeInterval!
     
     var cards : [SKSpriteNode] = []
     var cardsBacks : [SKSpriteNode] = []
@@ -72,16 +77,17 @@ class PlayScene: SKScene {
                             data.acceleration.x, dy:
                             data.acceleration.y);
                         
-                        //ball?.position = CGPoint(x: data.acceleration.y*300, y: data.acceleration.x*300)
-                        if((self?.lastZ)! < 0.0 && data.acceleration.z > 0.0){
+                        if((self?.lastZ)! < 0.5 && data.acceleration.y > 0.5){
                             self?.GoMenu()
                         }
                         
-                        self?.lastZ = data.acceleration.z
-                        print("x: \(data.acceleration.x), y: \(data.acceleration.y), z: \(data.acceleration.z)");
+                        self?.lastZ = data.acceleration.y
+                        //print("x: \(data.acceleration.x), y: \(data.acceleration.y), z: \(data.acceleration.z)");
                     }
             })
         }
+        pauseTimer = Date().timeIntervalSinceReferenceDate
+        startGyros()
  
     }
     
@@ -94,11 +100,14 @@ class PlayScene: SKScene {
         }
         lastUpdateTimeInterval = currentTime
         
+        
         if(!firstFrame){
-        timer = timer - delta
-        if timer < 0 { timer = 0 }
-        timeLabel?.text = "Time: \(Int(timer))"
-        UpdateScore()
+            if(!pauseState){
+                timer = timer - delta
+                if timer < 0 { timer = 0 }
+                timeLabel?.text = "Time: \(Int(timer))"
+                UpdateScore()
+            }
         }
         firstFrame = false
     }
@@ -114,6 +123,10 @@ class PlayScene: SKScene {
     
     func ProcessItemTouch(nod : SKSpriteNode)
     {
+        if(pauseState)
+        {
+            return
+        }
         if(nod.name == "GameBack")
         {
             GoMenu()
@@ -362,6 +375,26 @@ class PlayScene: SKScene {
         }
     }
     
+    func TogglePause()
+    {
+        if(pauseTimer + 0.5 < Date.timeIntervalSinceReferenceDate)
+        {
+            pauseState = !pauseState
+            pauseTimer = Date.timeIntervalSinceReferenceDate
+            
+            print("pauseFunc: \(pauseState)")
+            
+            if(pauseState)
+            {
+                pauseLayer.run(SKAction.unhide())
+            }
+            else
+            {
+                pauseLayer.run(SKAction.hide())
+            }
+        }
+    }
+    
     func ResetGame()
     {
         CreateGameButtons()
@@ -467,5 +500,47 @@ class PlayScene: SKScene {
         timeLabel.color = SKColor.white
         timeLabel.zPosition = 10
         addChild(timeLabel)
+        
+        pauseLayer = SKSpriteNode(imageNamed: "Background")
+        pauseLayer.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        pauseLayer.zPosition = 100
+        pauseLayer.size = CGSize(width: self.view!.bounds.size.width * 2, height: self.view!.bounds.size.height * 2)
+        pauseLayer.name = "pauseLayer"
+        pauseLayer.run(SKAction.hide())
+        addChild(pauseLayer)
+    }
+    
+    func startGyros() {
+        if motionManager.isGyroAvailable {
+            self.motionManager.gyroUpdateInterval = 1.0 / 60.0
+            self.motionManager.startGyroUpdates()
+            
+            // Configure a timer to fetch the accelerometer data.
+            self.gyroTimer = Timer(fire: Date(), interval: (1.0/60.0),
+                               repeats: true, block: { (timer) in
+                                // Get the gyro data.
+                                if let data = self.motionManager.gyroData {
+                                    let x = data.rotationRate.x
+                                    //let y = data.rotationRate.y
+                                    //let z = data.rotationRate.z
+                                    if(x > 5){
+                                        self.TogglePause()
+                                    }
+                                    // Use the gyroscope data in your app.
+                                }
+            })
+            
+            // Add the timer to the current run loop.
+            RunLoop.current.add(self.gyroTimer!, forMode: .defaultRunLoopMode)
+        }
+    }
+    
+    func stopGyros() {
+        if self.gyroTimer != nil {
+            self.gyroTimer?.invalidate()
+            self.gyroTimer = nil
+            
+            self.motionManager.stopGyroUpdates()
+        }
     }
 }
