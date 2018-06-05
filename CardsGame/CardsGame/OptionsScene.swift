@@ -35,9 +35,7 @@ class OptionsScene: SKScene, SliderDelegate {
         gameBack.zPosition = 10
         gameBack.name = "GameBack"
         addChild(gameBack)
-        
     }
-    
     
     func sliderValueChanged(sender: Slider, value: CGFloat) {
         UserDefaults.standard.set(sender.value, forKey: "MUSIC_VOLUME")
@@ -52,7 +50,6 @@ class OptionsScene: SKScene, SliderDelegate {
         self.ProcessItemTouch(nod: touchedNode)
     }
     
-    
     func ProcessItemTouch(nod : SKSpriteNode)
     {
         if(nod.name == "GameBack")
@@ -62,9 +59,17 @@ class OptionsScene: SKScene, SliderDelegate {
     }
     
     func GoMenu(){
-        if let view = self.view, let returnScene = returnScene {
-            
+       /* if let view = self.view, let returnScene = returnScene {
+        
             view.presentScene(returnScene, transition: .flipVertical(withDuration: 0.2))
+        }
+        */
+        if let view = self.view {
+            let scene = GameScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
+            //scene.returnScene = self
+            
+            scene.scaleMode = .aspectFill
+            view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
 }

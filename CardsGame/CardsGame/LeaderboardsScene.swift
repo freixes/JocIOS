@@ -92,8 +92,15 @@ class LeaderboardsScene: SKScene {
     }
     
     func GoMenu(){
-        if let view = self.view, let returnScene = returnScene {
+        /*if let view = self.view, let returnScene = returnScene {
             view.presentScene(returnScene, transition: .flipVertical(withDuration: 0.2))
+        }*/
+        if let view = self.view {
+            let scene = GameScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
+            //scene.returnScene = self
+            
+            scene.scaleMode = .aspectFill
+            view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
 }

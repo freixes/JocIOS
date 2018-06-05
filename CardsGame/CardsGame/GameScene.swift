@@ -159,33 +159,10 @@ class GameScene: SKScene {
     func GoLeaderBoard(){
         if let view = self.view {
             let scene = LeaderboardsScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
-            scene.returnScene = self
+            //scene.returnScene = self
             
             scene.scaleMode = .aspectFill
             view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
-    
-    /*func StartGyros() {
-        if motion.isGyroAvailable {
-            self.motion.gyroUpdateInterval = 1.0 / 60.0
-            self.motion.startGyroUpdates()
-            
-            // Configure a timer to fetch the accelerometer data.
-            self.timer = Timer(fire: Date(), interval: (1.0/60.0),
-                               repeats: true, block: { (timer) in
-                                // Get the gyro data.
-                                if let data = self.motion.gyroData {
-                                    let x = data.rotationRate.x
-                                    let y = data.rotationRate.y
-                                    let z = data.rotationRate.z
-                                    
-                                    // Use the gyroscope data in your app.
-                                }
-            })
-            
-            // Add the timer to the current run loop.
-            RunLoop.current.add(self.timer!, forMode: .defaultRunLoopMode)
-        }
-    }*/
 }

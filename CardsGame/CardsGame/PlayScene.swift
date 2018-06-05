@@ -28,8 +28,10 @@ class PlayScene: SKScene {
     var gyroTimer : Timer!
     
     var pauseLayer : SKSpriteNode!
+    var pauseImg : SKSpriteNode!
     var pauseState : Bool = false
     var pauseTimer : TimeInterval!
+    var scoreLabel : SKLabelNode!
     
     var cards : [SKSpriteNode] = []
     var cardsBacks : [SKSpriteNode] = []
@@ -48,7 +50,7 @@ class PlayScene: SKScene {
     var tryCount : Int = 0
     var score : Int = 0
     
-    var scoreLabel : SKLabelNode!
+    var f : SKLabelNode!
     
     var timeLabel : SKLabelNode!
     
@@ -77,11 +79,11 @@ class PlayScene: SKScene {
                             data.acceleration.x, dy:
                             data.acceleration.y);
                         
-                        if((self?.lastZ)! < 0.5 && data.acceleration.y > 0.5){
+                        if((self?.lastZ)! < 0.5 && data.acceleration.x > 0.5){
                             self?.GoMenu()
                         }
                         
-                        self?.lastZ = data.acceleration.y
+                        self?.lastZ = data.acceleration.x
                         //print("x: \(data.acceleration.x), y: \(data.acceleration.y), z: \(data.acceleration.z)");
                     }
             })
@@ -170,7 +172,8 @@ class PlayScene: SKScene {
                                             self.SetMatchesCount(score: self.matchesCount + 1)
                                             if(self.CheckIfGameOver() == true) {
                                                 self.UpdateRanking()
-                                                self.GoMenu()
+                                                self.GoLeaderBoard()
+                                                //self.GoMenu()
                                             }
                                         }
                                     } else {
@@ -387,10 +390,12 @@ class PlayScene: SKScene {
             if(pauseState)
             {
                 pauseLayer.run(SKAction.unhide())
+                pauseImg.run(SKAction.unhide())
             }
             else
             {
                 pauseLayer.run(SKAction.hide())
+                pauseImg.run(SKAction.hide())
             }
         }
     }
@@ -426,8 +431,15 @@ class PlayScene: SKScene {
     
     
     func GoMenu(){
-        if let view = self.view, let returnScene = returnScene {
+        /*if let view = self.view, let returnScene = returnScene {
             view.presentScene(returnScene, transition: .flipVertical(withDuration: 0.2))
+        }*/
+        if let view = self.view {
+            let scene = GameScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
+            //scene.returnScene = self
+            
+            scene.scaleMode = .aspectFill
+            view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
     
@@ -491,7 +503,7 @@ class PlayScene: SKScene {
         scoreLabel.color = SKColor.white
         scoreLabel.zPosition = 10
         addChild(scoreLabel)
-        
+ 
         timeLabel = SKLabelNode(fontNamed: "Chalkduster")
         timeLabel.position = CGPoint(x : size.width - 150 , y : size.height - 40)
         timeLabel.text = "hello"
@@ -507,6 +519,14 @@ class PlayScene: SKScene {
         pauseLayer.name = "pauseLayer"
         pauseLayer.run(SKAction.hide())
         addChild(pauseLayer)
+        
+        pauseImg = SKSpriteNode(imageNamed: "pause")
+        pauseImg.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        pauseImg.zPosition = 100
+        pauseImg.size = CGSize(width: self.view!.bounds.size.width, height: self.view!.bounds.size.height)
+        pauseImg.name = "pauseImg"
+        pauseImg.run(SKAction.hide())
+        addChild(pauseImg)
     }
     
     func startGyros() {
@@ -540,6 +560,16 @@ class PlayScene: SKScene {
             self.gyroTimer = nil
             
             self.motionManager.stopGyroUpdates()
+        }
+    }
+    
+    func GoLeaderBoard(){
+        if let view = self.view {
+            let scene = LeaderboardsScene(size: view.frame.size.applying(CGAffineTransform(scaleX: 2, y: 2)))
+            //scene.returnScene = self
+            
+            scene.scaleMode = .aspectFill
+            view.presentScene(scene, transition: .flipHorizontal(withDuration: 0.2))
         }
     }
 }
